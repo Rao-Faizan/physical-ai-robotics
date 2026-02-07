@@ -51,7 +51,7 @@ export default function ContentControls({ contentId, originalContent }: ContentC
     setLoading(true);
     try {
       const API_URL = process.env.NODE_ENV === 'production'
-        ? 'https://areeba-fatima-book.hf.space/api'
+        ? 'http://localhost:8000/api' // TODO: Update with your backend URL
         : 'http://localhost:8000/api';
 
       const token = localStorage.getItem('token');
@@ -90,7 +90,7 @@ export default function ContentControls({ contentId, originalContent }: ContentC
     setLoading(true);
     try {
       const API_URL = process.env.NODE_ENV === 'production'
-        ? 'https://areeba-fatima-book.hf.space/api'
+        ? 'http://localhost:8000/api' // TODO: Update with your backend URL
         : 'http://localhost:8000/api';
 
       const response = await fetch(`${API_URL}/translate/urdu`, {
