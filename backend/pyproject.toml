@@ -3,14 +3,14 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hackathon-book-api"
+name = "physical-ai-robotics-api"
 version = "1.0.0"
 description = "FastAPI Backend for Physical AI & Humanoid Robotics Interactive Textbook"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "Project Team", email = "team@example.com"}
+    {name = "Faizan Raza", email = "162736988+Rao-Faizan@users.noreply.github.com"}
 ]
 keywords = ["fastapi", "rag", "chatbot", "ai", "robotics", "education"]
 classifiers = [
@@ -62,10 +62,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://huggingface.co/spaces/areeba-fatima/book"
-Documentation = "https://areeba-fatima-book.hf.space/docs"
-Repository = "https://huggingface.co/spaces/areeba-fatima/book"
-Issues = "https://huggingface.co/spaces/areeba-fatima/book/discussions"
+Homepage = "https://github.com/Rao-Faizan/physical-ai-robotics"
+Documentation = "https://rao-faizan.github.io/physical-ai-robotics/"
+Repository = "https://github.com/Rao-Faizan/physical-ai-robotics"
+Issues = "https://github.com/Rao-Faizan/physical-ai-robotics/issues"
 
 [tool.setuptools]
 packages = ["api", "app", "rag", "scripts"]

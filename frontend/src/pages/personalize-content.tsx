@@ -42,7 +42,7 @@ export default function PersonalizeContent() {
 
     try {
       const API_URL = process.env.NODE_ENV === 'production'
-        ? 'https://areeba-fatima-book.hf.space/api'
+        ? 'http://localhost:8000/api' // TODO: Update with your backend URL
         : 'http://localhost:8000/api';
 
       // Use user profile if available, otherwise use defaults

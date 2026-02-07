@@ -8,7 +8,7 @@
 // API configuration
 const API_BASE_URL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:8000'
-  : 'https://areeba-fatima-book.hf.space'; // Production backend URL (Hugging Face Space)
+  : 'http://localhost:8000'; // TODO: Update this with your deployed backend URL
 
 /**
  * Source citation from chatbot response
