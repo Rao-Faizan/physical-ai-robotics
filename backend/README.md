@@ -1,5 +1,5 @@
 ---
-title: Hackathon Book API
+title: Physical AI Robotics API
 emoji: 📚
 colorFrom: blue
 colorTo: green

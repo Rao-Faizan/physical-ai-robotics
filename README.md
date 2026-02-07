@@ -4,12 +4,20 @@ An interactive textbook platform for learning Physical AI and Humanoid Robotics,
 
 ## 🚀 Features
 
-- **📚 Comprehensive Course Content**: Complete curriculum on Physical AI, ROS 2, and NVIDIA Isaac
-- **🤖 AI Tutor**: RAG-powered chatbot for personalized learning assistance
-- **🌐 Urdu Translation**: Full support for Urdu language learners
-- **👤 Personalization**: Customized learning paths based on user preferences
+- **📚 Comprehensive Course Material**: Master ROS 2, NVIDIA Isaac, and Humanoid Robotics.
+- **🤖 RAG-Powered AI Tutor**: Get instant answers based on course content.
+- **🌍 Urdu Translation**: Technical content translated with Urdu support.
+- **⚡ Personalized Learning**: Content adjusts to your skill level.
 - **🔐 Authentication**: Secure user authentication system
 - **📱 Responsive Design**: Built with Docusaurus for optimal viewing on all devices
+
+## 🛠️ Quick Start
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Rao-Faizan/physical-ai-robotics.git
+cd physical-ai-robotics
+```
 
 ## 🛠️ Tech Stack
 

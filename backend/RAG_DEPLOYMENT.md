@@ -137,7 +137,7 @@ npm install
 npm start
 ```
 
-Visit: `http://localhost:3000/hackathon-book/rag-chat`
+Visit: `http://localhost:3000/physical-ai-robotics/rag-chat`
 
 ## 📚 Document Ingestion Methods
 
