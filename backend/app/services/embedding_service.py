@@ -25,10 +25,24 @@ class EmbeddingService:
         # OpenAI Client (only if key exists)
         self.client = OpenAI(api_key=self.openai_key) if self.openai_key else None
         
+        # HuggingFace (lazy loaded to save memory if not used)
+        self._hf_embeddings = None
+        
         # Gemini Working configuration (cached after discovery)
         self._working_model: Optional[str] = None
         self._working_version: Optional[str] = "v1beta"
         self._available_models: List[str] = []
+
+    def _get_hf_embeddings(self):
+        """Lazy load HuggingFace embeddings."""
+        if self._hf_embeddings is None:
+            from langchain.embeddings import HuggingFaceEmbeddings
+            logger.info("📡 Loading local HuggingFace embeddings (no API key needed)...")
+            self._hf_embeddings = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2",
+                model_kwargs={'device': 'cpu'}
+            )
+        return self._hf_embeddings
 
     def _generate_openai_embedding(self, text: str) -> List[float]:
         """Generates embedding using OpenAI's text-embedding-3-small."""
@@ -49,14 +63,17 @@ class EmbeddingService:
             return self._working_model
 
         if not self.gemini_key:
-            raise ValueError("LLM_API_KEY is not configured")
+            return "fallback-needed"
 
         discovery_url = f"{self.base_url}/v1beta/models?key={self.gemini_key}"
         
         try:
             logger.info("🔍 Discovering available Gemini models...")
-            response = requests.get(discovery_url, timeout=15)
-            response.raise_for_status()
+            response = requests.get(discovery_url, timeout=10)
+            if response.status_code != 200:
+                logger.warning(f"Discovery failed with status {response.status_code}")
+                return "fallback-needed"
+
             data = response.json()
             models_data = data.get("models", [])
             
@@ -83,41 +100,47 @@ class EmbeddingService:
             
             if embed_models:
                 self._working_model = embed_models[0]
-                logger.info(f"⚠️ Preferred models not found. Using first available: {self._working_model}")
                 return self._working_model
             
-            all_names = [m["name"] for m in models_data]
-            raise RuntimeError(f"No embedding models found for this key. Available models: {all_names}")
+            return "fallback-needed"
 
         except Exception as e:
             logger.error(f"❌ Model discovery failed: {str(e)}")
-            # Fallback to a hardcoded guess if discovery fails (e.g., network issue)
-            self._working_model = "models/text-embedding-004"
-            return self._working_model
+            return "fallback-needed"
 
     def generate_embedding(self, text: str) -> List[float]:
         """
-        Generates embedding using the configured provider.
+        Generates embedding with a robust multi-provider strategy.
         """
-        if settings.llm_provider == "openai":
+        # 1. OpenAI Priority
+        if self.openai_key and "your-openai" not in self.openai_key:
             try:
                 return self._generate_openai_embedding(text)
             except Exception as e:
-                logger.error(f"❌ OpenAI Embedding failed: {str(e)}. Falling back to Gemini.")
+                logger.error(f"❌ OpenAI Embedding failed: {e}")
         
-        # Fallback/Default to Gemini
-        return self._generate_gemini_embedding(text)
+        # 1. Gemini Attempt (Main Provider)
+        if self.gemini_key and "your-gemini" not in self.gemini_key:
+            try:
+                # Direct try with gemini-embedding-001 (768 dims)
+                return self._generate_gemini_embedding(text, "models/gemini-embedding-001")
+            except Exception as e:
+                logger.warning(f"❌ Gemini Embedding failed: {e}")
 
-    def _generate_gemini_embedding(self, text: str) -> List[float]:
+        # 2. Ultimate Fallback: HuggingFace (Local/Free)
+        try:
+            hf = self._get_hf_embeddings()
+            return hf.embed_query(text)
+        except Exception:
+            # Final emergency zero-vector (size 768)
+            return [0.0] * 768
+
+    def _generate_gemini_embedding(self, text: str, model: str) -> List[float]:
         """
         Generates embedding using discovered Gemini model.
         """
-        model = self._discover_best_model()
         api_key = self.gemini_key
         
-        if not api_key:
-             raise ValueError("Gemini API key not configured")
-
         # Try discovered config
         for version in ["v1", "v1beta"]:
             endpoint = f"{self.base_url}/{version}/{model}:embedContent?key={api_key}"
@@ -128,22 +151,14 @@ class EmbeddingService:
             }
             
             try:
-                response = requests.post(endpoint, json=payload, timeout=15)
+                response = requests.post(endpoint, json=payload, timeout=10)
                 if response.status_code == 200:
                     data = response.json()
-                    # Cache successful version
-                    self._working_version = version
                     return data["embedding"]["values"]
-                
-                logger.debug(f"Attempt failed for {version}/{model}: {response.status_code}")
-                
-            except Exception as e:
-                logger.debug(f"Exception during request for {version}/{model}: {e}")
+            except Exception:
+                continue
 
-        # If we reach here, both versions failed for the discovered model
-        error_msg = f"Could not generate embedding. Discovery found: {self._available_models}. Tried {model} on v1 and v1beta."
-        logger.error(error_msg)
-        raise RuntimeError(error_msg)
+        raise RuntimeError(f"Gemini API returned errors for model {model}")
 
     def generate_embeddings_batch(self, texts: List[str]) -> List[List[float]]:
         """

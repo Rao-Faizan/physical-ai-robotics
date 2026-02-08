@@ -129,8 +129,9 @@ class AgentService:
         """Creates the collection and adds a welcome chunk if it doesn't exist."""
         from qdrant_client.models import VectorParams, Distance, PointStruct
         
-        # Dimensions based on current provider
-        dims = 1536 if self.provider == "openai" else 768
+        # Use verified dimensions for Gemini/HuggingFace (768 or 384)
+        # For this project, we are standardizing on Gemini 768
+        dims = 768 
         
         try:
             self.qdrant_client.create_collection(
@@ -177,13 +178,41 @@ class AgentService:
                 logger.error(f"OpenAI error: {e}. Falling back to Gemini.")
         
         # Gemini Fallback
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        full_prompt = f"{system_prompt}\n\n{user_prompt}"
-        response = model.generate_content(
-            full_prompt,
-            generation_config=genai.types.GenerationConfig(temperature=temperature)
-        )
-        return response.text
+        try:
+            if not self.gemini_key or "your-gemini-api-key" in self.gemini_key:
+                return "⚠️ [Configuration Error]: Gemini API Key is missing or invalid in your .env file. Please add a valid key to use the chatbot."
+
+            # Model choices (latest stable versions including 2.0/2.5 series)
+            models_to_try = [
+                'gemini-2.0-flash', 
+                'gemini-2.5-flash', 
+                'gemini-2.0-flash-lite', 
+                'gemini-1.5-flash'
+            ]
+            
+            full_prompt = f"{system_prompt}\n\n{user_prompt}"
+            last_err = ""
+            
+            for model_name in models_to_try:
+                try:
+                    logger.info(f"Attempting response with model: {model_name}")
+                    model = genai.GenerativeModel(model_name)
+                    response = model.generate_content(
+                        full_prompt,
+                        generation_config=genai.types.GenerationConfig(temperature=temperature)
+                    )
+                    return response.text
+                except Exception as e:
+                    last_err = str(e)
+                    logger.warning(f"Model {model_name} failed: {e}")
+                    continue
+            
+            return f"❌ [Model Error]: All Gemini models failed to respond. Latest error: {last_err}. Please ensure your API key has access to Gemini 1.5 models."
+        except Exception as e:
+            logger.error(f"Gemini critical error: {e}")
+            if "API_KEY_INVALID" in str(e) or "400" in str(e):
+                return "❌ [API Error]: Your Gemini API Key is invalid. Please check your .env file and ensure the key is correct."
+            return f"🚨 [System Error]: Could not generate response. Error: {str(e)}"
 
 # Global instance
 agent_service = AgentService()

@@ -75,7 +75,7 @@ export default function ContentControls({ contentId, originalContent }: ContentC
       // Replace content on page
       const contentElement = document.querySelector('.markdown');
       if (contentElement) {
-        contentElement.innerHTML = data.personalized_content;
+        (contentElement as HTMLElement).innerHTML = data.personalized_content;
         setIsPersonalized(true);
       }
     } catch (error) {
@@ -109,9 +109,9 @@ export default function ContentControls({ contentId, originalContent }: ContentC
       // Replace content on page
       const contentElement = document.querySelector('.markdown');
       if (contentElement) {
-        contentElement.innerHTML = data.translated;
-        contentElement.style.direction = 'rtl';
-        contentElement.style.textAlign = 'right';
+        (contentElement as HTMLElement).innerHTML = data.translated;
+        (contentElement as HTMLElement).style.direction = 'rtl';
+        (contentElement as HTMLElement).style.textAlign = 'right';
         setIsTranslated(true);
       }
     } catch (error) {

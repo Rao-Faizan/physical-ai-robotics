@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "physical-ai-robotics",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,7 @@
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "gh-pages -d build -b gh-pages",
+    "deploy": "gh-pages -d build -b gh-pages -t",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",

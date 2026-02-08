@@ -99,7 +99,7 @@ export default function NavbarWrapper(props: Props): JSX.Element {
       if (!response.ok) throw new Error('Personalization failed');
 
       const data = await response.json();
-      contentElement.innerHTML = data.personalized_content;
+      (contentElement as HTMLElement).innerHTML = data.personalized_content;
       alert('✨ Content personalized for your experience level!');
     } catch (error) {
       console.error('Personalization error:', error);
@@ -147,8 +147,8 @@ export default function NavbarWrapper(props: Props): JSX.Element {
 
       const data = await response.json();
       contentElement.innerHTML = data.translated;
-      contentElement.style.direction = 'rtl';
-      contentElement.style.textAlign = 'right';
+      (contentElement as HTMLElement).style.direction = 'rtl';
+      (contentElement as HTMLElement).style.textAlign = 'right';
       alert('🌐 Content translated to Urdu!');
     } catch (error) {
       console.error('Translation error:', error);

@@ -27,11 +27,11 @@ class Settings(BaseSettings):
     # Qdrant Configuration
     qdrant_url: str = os.getenv("QDRANT_URL", "")
     qdrant_api_key: str = os.getenv("QDRANT_API_KEY", "")
-    qdrant_collection_name: str = os.getenv("QDRANT_COLLECTION_NAME", "book-hackathon")
+    qdrant_collection_name: str = os.getenv("QDRANT_COLLECTION_NAME", "physical-ai-robotics-final")
 
     # Embedding Configuration
-    embedding_model: str = os.getenv("EMBEDDING_MODEL", "models/text-embedding-004")
-    embedding_dimensions: int = int(os.getenv("EMBEDDING_DIMENSIONS", "1536"))
+    embedding_model: str = os.getenv("EMBEDDING_MODEL", "models/gemini-embedding-001")
+    embedding_dimensions: int = int(os.getenv("EMBEDDING_DIMENSIONS", "3072"))
 
     # Chunking Configuration
     chunk_size: int = int(os.getenv("CHUNK_SIZE", "512"))
