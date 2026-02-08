@@ -327,7 +327,7 @@ export default function Home() {
               <Link to="docs/intro" className={styles.ctaPrimary}>
                 Start Learning Now
               </Link>
-              <Link to="https://github.com/Asmayaseen/hackathon-book" className={styles.ctaSecondary}>
+              <Link to="https://github.com/Rao-Faizan/physical-ai-robotics" className={styles.ctaSecondary}>
                 View on GitHub
               </Link>
             </div>

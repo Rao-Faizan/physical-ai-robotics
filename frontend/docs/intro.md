@@ -149,7 +149,7 @@ Ready to begin your journey into Physical AI? Start with [Weeks 1-2: Introductio
 
 ## 🤝 Support & Resources
 
-- **GitHub Repository:** [Access course code and examples](https://github.com/Asmayaseen/hackathon-book)
+- **GitHub Repository:** [Access course code and examples](https://github.com/Rao-Faizan/physical-ai-robotics)
 - **Discussions:** Ask questions and connect with peers
 - **Hardware Guides:** Detailed setup instructions for each platform
 
